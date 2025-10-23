@@ -106,7 +106,7 @@ def inpt_cleaner(inpt: str):
 
 
 def Agenda_Processor(inpt: str, 
-                     start=['Contingency Funding', 'Finance Rule', 'Rule Waiver', 'Space Reservation'], 
+                     start=['Contingency', 'Finance Rule', 'Rule Waiver', 'Space Reservation'], 
                      end=['Finance Rule', 'Rule Waiver', 'Space Reservation', 'Sponsorship', 'Adjournment', 'ABSA', 'ABSA Appeals'], 
                      identifier='(\w+\s\d{1,2}\w*,\s\d{4})', 
                      date_format="%m/%d/%Y", 
@@ -195,15 +195,17 @@ def Agenda_Processor(inpt: str,
                   allocations.append(np.nan)
 
          rv = pd.DataFrame({
-            'Organization Name' : pd.Series(motion_dict.keys()).str.strip(), #solves issue of '\r' staying at the end of club names and messing things up
-            'Ficomm Decision' : decisions, 
-            'Amount Allocated' : allocations, 
-            'Date' : [date]*len(allocations)
+            'Org Name' : pd.Series(motion_dict.keys()).str.strip(), #solves issue of '\r' staying at the end of club names and messing things up
+            "Request Type": [s] * len(allocations),
+            'Committee Status' : decisions, 
+            'Amount' : allocations, 
+            'Date' : [date]*len(allocations),
             }
          )
     
          list_of_dfs.append(rv)
    # print(f"Agenda Processor Final df: {rv}")
    rv = pd.concat(list_of_dfs)
+   rv["Org Name"] = rv["Org Name"].str.replace("*", "")
 
    return rv, date
