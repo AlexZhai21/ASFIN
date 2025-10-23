@@ -100,13 +100,17 @@ def _motion_processor(club_names, names_and_motions):
 
    return rv
 
+def inpt_cleaner(inpt: str):
+   inpt = re.sub(r"\(\$?\d+,?\d*\.?\d*\)", "", inpt)
+   return inpt
+
 
 def Agenda_Processor(inpt: str, 
                      start=['Contingency Funding', 'Finance Rule', 'Rule Waiver', 'Space Reservation'], 
                      end=['Finance Rule', 'Rule Waiver', 'Space Reservation', 'Sponsorship', 'Adjournment', 'ABSA', 'ABSA Appeals'], 
                      identifier='(\w+\s\d{1,2}\w*,\s\d{4})', 
                      date_format="%m/%d/%Y", 
-                     debug=False):
+                     debug=True):
    """
    You have a chunk of text from the document you want to turn into a table and an identifier for that chunk of text (eg. just the Contingency Funding section and the identifeir is the date). 
    Thus function extracts the chunk and converts it into a tabular format.
@@ -136,7 +140,7 @@ def Agenda_Processor(inpt: str,
             print(f"Agenda Processor Pattern: {pattern}")
          
          chunk = re.findall(rf"{pattern}", inpt)[0]
-
+         chunk = inpt_cleaner(chunk)
          print(f"chunk: {chunk}")
 
          valid_name_chars = r'\w\s\-\_\*\&\%\$\+\#\@\!\(\)\,\'\"' #seems to perform better with explicit handling for special characters? eg. for 'Telegraph+' we add the plus sign so regex will pick it up
